@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="src/object.js"></script>
+<script src="src/pcombinator.js"></script>
+</head>
+<body>
+<script>
+var a = jObject.create({
+    a:1
+});
+var b = a.create({
+    a:2,
+    b:1
+});
+console.log(a.a, b.a);
+delete b.a;
+console.log(a.a, b.a);
+
+</script>
+</body>
+</html>
