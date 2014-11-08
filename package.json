@@ -1,0 +1,35 @@
+{
+  "name": "p-combinator",
+  "description": "A JavaScript parser combinator Library",
+  "version": "0.1.0",
+  "homepage": "https://github.com/takumi4ichi",
+  "author": {
+    "name": "takumi4ichi",
+    "email": "takumi4ichi@gmail.com"
+  },
+  "main": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:takumi4ichi/P-Combinator.git"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "/blob/master/LICENSE"
+    }
+  ],
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "devDependencies": {
+  },
+  "dependencies": {
+    "lodash": "^2.4.1"
+  },
+  "keywords": [
+    "lib",
+    "javascript",
+    "parser",
+    "parser-combinator"
+  ]
+}
