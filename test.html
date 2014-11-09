@@ -6,16 +6,16 @@
 </head>
 <body>
 <script>
-var a = jObject.create({
-    a:1
-});
-var b = a.create({
-    a:2,
-    b:1
-});
-console.log(a.a, b.a);
-delete b.a;
-console.log(a.a, b.a);
+    var pc = PCombinator;
+
+    var inputs = '11221133114411561155';
+
+    var parse11 = pc.string('11');
+    var parsedd = pc.regex(/((\d)\2)/);
+
+    var parse11dd = pc.seq(parse11, parsedd);
+
+    console.log(parse11dd(inputs, 0).value.join(''));
 
 </script>
 </body>
