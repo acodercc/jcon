@@ -1,13 +1,27 @@
 /**
  *
+ * P-Combinator
+ *
+ * A JavaScript parser combinator Library
+ *
  */
 (function(global){
 
     var slice = Array.prototype.slice;
 
-    var base = jObject.create({
+    /**
+     * 原子解析器的构造器，基于给定的模式（STR或RE），返回一个进行模式匹配（解析）的函数
+     */
+    var generator = jObject.create({
 
         /**
+         * @method string
+         *
+         * @param {string} str
+         *
+         * @return {function} 
+         *
+         * @desc 基于一个给定的字符串，创建一个parse函数
          *
          */
         string: function(str){
@@ -43,11 +57,17 @@
     });
 
     /**
-     * 增加组合子
+     * 解析器的组合器（将多个解析器以 seq,or,times 等方式组合为新的解析器）
      */
-    var combinator = base.create({
+    var combinator = generator.create({
         /**
+         * @method seq
          *
+         * @param {Array:function} arguments      n个将要被以顺序方式组合的解析器
+         *
+         * @return {function} 组合后的解析器函数
+         *
+         * @desc  进行解析器的顺序组合
          */
         seq: function(){
             var args = slice.call(arguments, 0);

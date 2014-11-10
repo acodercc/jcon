@@ -105,7 +105,7 @@
          * @desc:
          *  a syntactic sugar: 
          *      Object.create(obj) 等价于 obj.create()
-         *      mixin.call(Object.create(obj), {a:1}) 等价于 obj.create({a:1})  隐式上下文dsl
+         *      mixin.call(Object.create(obj), {a:1}, {b:2}) 等价于 obj.create({a:1}, {b:2})  隐式上下文dsl
          *
          */
         create: function(){
