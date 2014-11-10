@@ -8,14 +8,17 @@
 <script>
     var pc = PCombinator;
 
-    var inputs = '11221133114411561155';
+    var inputs = '11221133114411561155';        //11dd
 
     var parse11 = pc.string('11');
     var parsedd = pc.regex(/((\d)\2)/);
 
     var parse11dd = pc.seq(parse11, parsedd);
 
-    console.log(parse11dd(inputs, 0).value.join(''));
+    console.log(parse11dd(inputs, 0));          //1122
+    console.log(parse11dd(inputs, 4));          //1133
+    console.log(parse11dd(inputs, 8));          //1144
+    console.log(parse11dd(inputs, 12));         //unexcepted
 
 </script>
 </body>

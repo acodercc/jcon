@@ -28,6 +28,9 @@
          */
         regex: function(re, grp){
             grp = grp || 0;
+
+            //对正则进行处理，加入^符号，从被截取的输入流开头进行匹配
+            re = eval(re.toString().replace(/^\//, '/^'));
             return function(stream, index){
                 var match = re.exec(stream.slice(index));
 
@@ -52,8 +55,9 @@
             return function(stream, index){
                 var curindex = index,
                 values = [],
-                result;
-                while(parse = args.shift()){
+                result,
+                parserIndex = 0;
+                while(parse = args[parserIndex++]){
                     result = parse(stream, curindex);
                     if(result.success){
                         curindex = result.index;
