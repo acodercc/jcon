@@ -7,7 +7,7 @@
  * 参考：http://my.safaribooksonline.com/book/software-engineering-and-development/ide/9780132107549/common-topics/contextvariable_
  *
  */
-(function(global){
+var jObject = (function(undefined){
 
     var create = Object.create || function(o){ function F(){} f.prototype = o; return new F;},
     hasOwn = Object.prototype.hasOwnProperty;
@@ -23,7 +23,7 @@
         return this;
     }
 
-    global.jObject = {
+    return {
 
         /**
          * @method mixin
@@ -82,4 +82,4 @@
     sheep.say();
     */
 
-}(this));
+}());
