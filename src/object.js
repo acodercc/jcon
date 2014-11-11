@@ -1,111 +1,59 @@
 /**
  * jObject
  *
- * 为javascript Object提供基于Object.create和mixin的隐式上下文的继承，以及AOP能力
+ * 为javascript Object提供基于Object.create和mixin的，可使用隐式上下文DSL的继承和混入
+ * 
+ * 参考：http://javascript.crockford.com/prototypal.html
+ * 参考：http://my.safaribooksonline.com/book/software-engineering-and-development/ide/9780132107549/common-topics/contextvariable_
+ *
  */
 (function(global){
 
     var create = Object.create || function(o){ function F(){} f.prototype = o; return new F;},
-    slice = Array.prototype.slice,
-    hasOwn = Object.prototype.hasOwnProperty,
-    posRE = /^(after|before)/;
+    hasOwn = Object.prototype.hasOwnProperty;
 
 
-    /**
-     * @function aoplize
-     *
-     * @desc 为当前对象上的某个方法建立前切面或后切面
-     *
-     */
-    function aoplize(k, fun){
-        var self = this,
-        pos = k.match(posRE)[0],
-        k = origKey(k),
-        origMethod = self[k];
-
-        self[k] = {
-            /**
-             * 前切面
-             */
-            before: function(){
-                fun.apply(this, arguments);
-                return origMethod.apply(this, arguments);
-            },
-            /**
-             * 后切面
-             */
-            after: function(){
-                var args = slice.call(arguments, 0);
-                var ret = origMethod.apply(this, args);
-                args.unshift(ret);
-                return fun.apply(this, args);
-            }
-        }[pos];
-    }
-
-    /*
-    var a = {
-        say: function(){
-            console.log('hi');
-        }
-    };
-    aoplize.call(a, 'beforeSay', function(){
-        console.log('ready say');
-    });
-    aoplize.call(a, 'afterSay', function(){
-        console.log('sayed');
-    });
-
-    a.say();
-    */
-
-    
-    /**
-     * @function origKey
-     *
-     * @param {string} k   like afterInit
-     *
-     * @return {string} like init
-     *
-     * @desc afterInit -> init     beforeInit -> init
-     */
-    function origKey(k){
-        return k.replace(posRE, '').replace(/^([A-Z])/, function(_, chr){
-            return String.fromCharCode(chr.charCodeAt(0)+32);
-        });
-    }
-
-    /**
-     * @mixin
-     *
-     * @desc 拥有aoplize功能的mixin
-     */
     function mixin(){
-        var args = slice.call(arguments, 0),
-        self = this;
-
-        for(var i=0,len=args.length,k,o; i<len; i++){
-            o = args[i];
-            for(k in o) if(hasOwn.call(o, k)) {
-                if(posRE.test(k) && typeof o[k] === 'function'){
-                    aoplize.call(self, k, o[k]);
-                }else{
-                    self[k] = o[k]
-                }
+        for(var i=0,len=arguments.length,o; i<len; i++){
+            o = arguments[i];
+            for(var k in o) if(hasOwn.call(o, k)) {
+                this[k] = o[k]
             }
         }
-        return self;
+        return this;
     }
 
     global.jObject = {
 
+        /**
+         * @method mixin
+         *
+         * @param {Array:function) arguments 将要被混入this的对象
+         *
+         * @desc
+         *   
+         *  这是一个syntactic sugar
+         *  源于martin fowler提到的隐式上下文DSL以及链式调用
+         *
+         *      mixin.call(obj, {a:1}, {b:2}, {c:3}) 等价于 obj.mixin({a:1}, {b:2}).mixin({c:3})
+         */
         mixin: mixin,
 
         /**
+         *
+         * @method create
+         *
+         * @param {Array:function} arguments 将要被混入this的对象
+         *
          * @desc:
-         *  a syntactic sugar: 
+         *
+         *  这是一个syntactic sugar
+         *  源于douglas crockford提到的begetObject
+         *
          *      Object.create(obj) 等价于 obj.create()
-         *      mixin.call(Object.create(obj), {a:1}, {b:2}) 等价于 obj.create({a:1}, {b:2})  隐式上下文dsl
+         *
+         *      mixin.call(Object.create(obj), {a:1}, {b:2}) 等价于 obj.create({a:1}, {b:2})
+         *
          *
          */
         create: function(){
@@ -115,7 +63,7 @@
 
 
 
-    /*  test inhert
+    /*  test inherit
     var animal = jObject.create({
         say: function(){
             console.log('....???');
@@ -133,35 +81,5 @@
     delete sheep.say;
     sheep.say();
     */
-
-
-    /* test aoplize
-    var peopleId=0;
-    var people = jObject.create({
-        init: function peopleInit(name){
-            this.name = name;
-            this.id = ++peopleId;
-            return name === 'cc' ? 'cc is god' : '';
-        }
-    });
-
-    var aliEmployee = people.create({
-        afterInit: function aliEmployeeInit(parentInitRet, name, employeeId){
-            this.employeeId = employeeId;
-            if(parentInitRet){
-                this.desc = parentInitRet;
-            }
-        }
-    });
-
-    var me = aliEmployee.create();
-    me.init('cc', 64855);
-    console.log(me);
-
-    var jackMa = aliEmployee.create();
-    jackMa.init('jackMa', 1);
-    console.log(jackMa);
-    */
-
 
 }(this));
