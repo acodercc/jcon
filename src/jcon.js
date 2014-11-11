@@ -238,6 +238,26 @@
          */
         times: function(parse, min, max){
             return function(stream, index){
+                var successTimes = 0,
+                values = [];
+
+                do{
+                    result = parse(stream, index);
+                    if(result.success){
+                        index = result.index;
+                        successTimes++;
+                        values.push(result.value);
+                        if(successTimes === max){
+                            break;
+                        }
+                    }
+                }while(result.success);
+
+                if(successTimes >= min && successTimes <= max){
+                    return success(index, values);
+                }else{
+                    return fail(index, '');
+                }
             };
         }
 
