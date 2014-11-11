@@ -1,4 +1,4 @@
-P-Combinator
+jcon
 ============
 
 A JavaScript parser combinator Library

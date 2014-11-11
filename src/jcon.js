@@ -1,6 +1,6 @@
 /**
  *
- * P-Combinator
+ * jcon 
  *
  * A JavaScript parser combinator Library
  *
@@ -244,7 +244,7 @@
     });
 
 
-    global.PCombinator = combinator;
+    global.jcon = combinator;
 
 
 

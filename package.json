@@ -1,5 +1,5 @@
 {
-  "name": "p-combinator",
+  "name": "jcon",
   "description": "A JavaScript parser combinator Library",
   "version": "0.1.0",
   "homepage": "https://github.com/takumi4ichi",
@@ -10,7 +10,7 @@
   "main": "./index.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:takumi4ichi/P-Combinator.git"
+    "url": "git@github.com:takumi4ichi/jcon.git"
   },
   "licenses": [
     {
