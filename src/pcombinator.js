@@ -53,7 +53,121 @@
                 }
                 return fail(index, re);
             };
+        },
+
+        /**
+         * @method success
+         *
+         * @param {string} value
+         *
+         * @desc 直接在输入流的当前位置返回一个成功状态
+         *
+         */
+        success: function(value){
+            return function(stream, index){
+                return success(index, value);
+            };
+        },
+
+        /**
+         * @method fail
+         *
+         * @param {string} expected
+         *
+         * @desc 直接在当前输入流上返回一个失败状态
+         *
+         */
+        fail: function(expected){
+            return function(stream, index){
+                return fail(index, expected);
+            };
+        },
+
+        /**
+         * @method chr
+         *
+         * @param {string} chr
+         *
+         * @desc 对当前输入流进行单个字符的匹配
+         */
+        chr: function(chr){
+            return function(stream, index){
+                if(stream[index] === chr){
+                    return success(index+1, chr);
+                }
+                return fail(index, chr);
+            };
+        },
+
+        /**
+         * @method instr
+         *
+         * @param {string} str
+         *
+         * @desc 如果当前输入流中下一个字符在给定的string中，则返回成功状态
+         *
+         */
+        inStr: function(str){
+            return function(stream, index){
+                if(str.indexOf(stream[index])>-1){
+                    return success(index+1, stream[index]);
+                }
+                return fail(index, 'in ' + str);
+            };
+        },
+
+        /**
+         * @method noInStr
+         *
+         * @param str
+         *
+         * @desc 如果当前输入流下一个字符不在给定的字符串中，则返回成功状态
+         */
+        noInStr: function(str){
+            return function(stream, index){
+                if(str.indexOf(stream[index]) === -1){
+                    return success(index+1, stream[index]);
+                }
+                return fail(index, 'no in '+ str);
+            };
+        },
+
+        /**
+         * @method until
+         *
+         * @param {function} assert
+         *
+         * @desc 不断的在输入流上进行匹配，直到不符合断言，将符合断言的串返回
+         */
+        until: function(assert){
+            return function(stream, index){
+                var values = [],
+                chr;
+                while(assert(stream[index])){
+                    values.push(stream[index]);
+                    index++;
+                }
+                if(values.length){
+                    return success(index, values);
+                }
+                return fail(index, 'assert:' + assert.toString());
+            };
+        },
+
+        /**
+         * @method lazy
+         *
+         * @param {function} getParser
+         *
+         * @desc 解析规则由解析动作发生时才提供
+         */
+        lazy: function(getParser){
+
+            return function(stream, index){
+                return getParser().call(this, stream, index);
+            };
         }
+
     });
 
     /**

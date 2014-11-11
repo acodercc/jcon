@@ -20,6 +20,23 @@
     console.log(parse11dd(inputs, 8));          //1144
     console.log(parse11dd(inputs, 12));         //unexcepted
 
+
+    var parseUntil = pc.until(function(chr){
+        return parseInt(chr,10) < 6;
+    });
+
+    console.log( parseUntil(inputs, 12) );
+
+    var parseLazy = pc.lazy(function(){
+        if(confirm('是否要parse 115?')){
+            return parseUntil;
+        }else{
+            return pc.fail('xx');
+        }
+    });
+
+    console.log(parseLazy(inputs, 12));
+
 </script>
 </body>
 </html>
