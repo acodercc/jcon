@@ -179,30 +179,68 @@
          *
          * @param {Array:function} arguments      n个将要被以顺序方式组合的解析器
          *
-         * @return {function} 组合后的解析器函数
-         *
          * @desc  进行解析器的顺序组合
          */
         seq: function(){
             var args = slice.call(arguments, 0);
 
             return function(stream, index){
-                var curindex = index,
+                var currentIndex = index,
                 values = [],
                 result,
-                parserIndex = 0;
+                parserIndex = 0,
+                parse;
                 while(parse = args[parserIndex++]){
-                    result = parse(stream, curindex);
+                    result = parse(stream, currentIndex);
                     if(result.success){
-                        curindex = result.index;
+                        currentIndex = result.index;
                         values.push(result.value);
                     }else{
-                        return fail(curindex, '');
+                        return fail(currentIndex, '');
                     }
                 }
-                return success(curindex, values);
+                return success(currentIndex, values);
+            };
+        },
+
+        /**
+         * @method or
+         *
+         * @param {Array:function} arguments        n个选择器，依次尝试匹配，返回第一个成功的
+         *
+         * @desc 进行解析器的或组合
+         */
+        or: function(){
+            var args = slice.call(arguments, 0);
+
+            return function(stream, index){
+                var parse,
+                parserIndex = 0;
+                while(parse = args[parserIndex++]){
+                    result = parse(stream, index);
+                    if(result.success){
+                        return success(result.index, result.value);
+                    }
+                }
+                return fail(index, 'in or_parser');
+            };
+        },
+
+        /**
+         * @method times
+         *
+         * @param {function} parse
+         * @param {number} min
+         * @param {number} max
+         *
+         * @desc 在当前输入流上，使用指定的parse进行最少min次，最多max次的匹配
+         *
+         */
+        times: function(parse, min, max){
+            return function(stream, index){
             };
         }
+
     });
 
 
