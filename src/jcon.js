@@ -9,6 +9,7 @@
 
     var slice = Array.prototype.slice;
 
+
     /**
      * 原子解析器的构造器，基于给定的模式（STR或RE），返回一个进行模式匹配（解析）的函数
      */
@@ -25,13 +26,13 @@
          *
          */
         string: function(str){
-            return function(stream, index){
+            return Parser(function(stream, index){
                 if(stream.substr(index, str.length) === str){
                     return success(index + str.length, str);
                 }else{
                     return fail(index, str);
                 }
-            };
+            });
         },
 
         /**
@@ -45,14 +46,14 @@
 
             //对正则进行处理，加入^符号，从被截取的输入流开头进行匹配
             re = eval(re.toString().replace(/^\//, '/^'));
-            return function(stream, index){
+            return Parser(function(stream, index){
                 var match = re.exec(stream.slice(index));
 
                 if(match && match[grp]){
                     return success(index+match[0].length, match[grp]);
                 }
                 return fail(index, re);
-            };
+            });
         },
 
         /**
@@ -64,9 +65,9 @@
          *
          */
         success: function(value){
-            return function(stream, index){
+            return Parser(function(stream, index){
                 return success(index, value);
-            };
+            });
         },
 
         /**
@@ -78,9 +79,9 @@
          *
          */
         fail: function(expected){
-            return function(stream, index){
+            return Parser(function(stream, index){
                 return fail(index, expected);
-            };
+            });
         },
 
         /**
@@ -91,12 +92,12 @@
          * @desc 对当前输入流进行单个字符的匹配
          */
         chr: function(chr){
-            return function(stream, index){
+            return Parser(function(stream, index){
                 if(stream[index] === chr){
                     return success(index+1, chr);
                 }
                 return fail(index, chr);
-            };
+            });
         },
 
         /**
@@ -108,12 +109,12 @@
          *
          */
         inStr: function(str){
-            return function(stream, index){
+            return Parser(function(stream, index){
                 if(str.indexOf(stream[index])>-1){
                     return success(index+1, stream[index]);
                 }
                 return fail(index, 'in ' + str);
-            };
+            });
         },
 
         /**
@@ -124,12 +125,12 @@
          * @desc 如果当前输入流下一个字符不在给定的字符串中，则返回成功状态
          */
         noInStr: function(str){
-            return function(stream, index){
+            return Parser(function(stream, index){
                 if(str.indexOf(stream[index]) === -1){
                     return success(index+1, stream[index]);
                 }
                 return fail(index, 'no in '+ str);
-            };
+            });
         },
 
         /**
@@ -140,7 +141,7 @@
          * @desc 不断的在输入流上进行匹配，直到不符合断言，将符合断言的串返回
          */
         until: function(assert){
-            return function(stream, index){
+            return Parser(function(stream, index){
                 var values = [],
                 chr;
                 while(assert(stream[index])){
@@ -151,7 +152,7 @@
                     return success(index, values);
                 }
                 return fail(index, 'assert:' + assert.toString());
-            };
+            });
         },
 
         /**
@@ -163,9 +164,10 @@
          */
         lazy: function(getParser){
 
-            return function(stream, index){
-                return getParser().call(this, stream, index);
-            };
+            return Parser(function(stream, index){
+                var parser = getParser();
+                return parser.parse(stream, index);
+            });
         }
 
     });
@@ -189,9 +191,9 @@
                 values = [],
                 result,
                 parserIndex = 0,
-                parse;
-                while(parse = args[parserIndex++]){
-                    result = parse(stream, currentIndex);
+                parser;
+                while(parser = args[parserIndex++]){
+                    result = parser.parse(stream, currentIndex);
                     if(result.success){
                         currentIndex = result.index;
                         values.push(result.value);
@@ -214,10 +216,10 @@
             var args = slice.call(arguments, 0);
 
             return function(stream, index){
-                var parse,
+                var parser,
                 parserIndex = 0;
-                while(parse = args[parserIndex++]){
-                    result = parse(stream, index);
+                while(parser = args[parserIndex++]){
+                    result = parser.parse(stream, index);
                     if(result.success){
                         return success(result.index, result.value);
                     }
@@ -236,13 +238,13 @@
          * @desc 在当前输入流上，使用指定的parse进行最少min次，最多max次的匹配
          *
          */
-        times: function(parse, min, max){
+        times: function(parser, min, max){
             return function(stream, index){
                 var successTimes = 0,
                 values = [];
 
                 do{
-                    result = parse(stream, index);
+                    result = parser.parse(stream, index);
                     if(result.success){
                         index = result.index;
                         successTimes++;

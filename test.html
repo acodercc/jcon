@@ -2,7 +2,9 @@
 <html>
 <head>
 <script src="src/object.js"></script>
+<script src="src/function.js"></script>
 <script src="src/jcon.js"></script>
+<script src="src/parser.js"></script>
 </head>
 <body>
 <script>
@@ -24,7 +26,7 @@
         return parseInt(chr,10) < 6;
     });
 
-    console.log( parseUntil(inputs, 12) );
+    console.log( parseUntil.parse(inputs, 12) );
 
     var parseLazy = jcon.lazy(function(){
         if(confirm('是否要parse 115?')){
@@ -34,12 +36,12 @@
         }
     });
 
-    console.log(parseLazy(inputs, 12));
+    console.log(parseLazy.parse(inputs, 12));
 
 
     parse11dd_time2 = jcon.times(parse11dd, 0, 2);
 
-    console.log(parse11dd_time2(inputs, 0));
+    console.log(parse11dd_time2.parse(inputs, 0));
 
 </script>
 </body>
