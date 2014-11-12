@@ -8,6 +8,8 @@
 <body>
 <script>
 
+
+
     var inputs = '11221133114411561155';        //11dd
 
     var parse11 = jcon.string('11');
@@ -41,6 +43,23 @@
     parser11dd_time2 = parser11dd.times( 0, 2).join();
 
     console.log(parser11dd_time2.parse(inputs, 0));
+
+    console.log( jcon.string('abc').seq(jcon.regex(/\d\d\d/)).join().times(0,2).join().parse('abc123abc456',0) );
+
+
+
+
+    var left = jcon.string('(');
+    var right = jcon.string(')');
+
+    var bracketOpt = jcon.lazy(function(){
+        return bracket.or(jcon.string(''));
+    }).join();
+
+    bracket = left.seq(bracketOpt, right);
+
+
+    console.log(bracketOpt.parse('(((())))',0));
 
 </script>
 </body>
