@@ -108,6 +108,26 @@ var jcon = (function(undefined){
                         return fail(index, '');
                     }
                 });
+            },
+
+            /**
+             * @method join
+             *
+             * @param {string} separator 将数组形式的result.value连接为字符串形式时使用的分隔符，默认为空字符串''
+             *
+             * @desc 对当前解析器函数对象执行后的结果的value值，进行合并
+             *
+             */
+            join: function(separator){
+                var self = this;
+                return Parser(function(stream, index){
+                    var result = self.parse(stream, index);
+                    if(result.success && result.value instanceof Array){
+                        result.value = result.value.join(separator||'');
+                    }
+
+                    return result;
+                });
             }
         }).initialize(f);
     }
