@@ -22,6 +22,8 @@
     "node": ">= 0.8.0"
   },
   "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-nodeunit": "^0.4.1"
   },
   "dependencies": {
     "lodash": "^2.4.1"

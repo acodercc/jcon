@@ -83,3 +83,15 @@ var jObject = (function(undefined){
     */
 
 }());
+
+(function(identifier, mod){
+    var isAmd = typeof define === 'function',
+    isCommonJs = typeof module === 'object' && !!module.exports;
+
+    if (isAmd) {
+        define(mod);
+    } else if (isCommonJs) {
+        module.exports = mod;
+    }
+
+}('jObject', jObject));

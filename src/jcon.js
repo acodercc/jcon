@@ -7,7 +7,9 @@
  */
 var jcon = (function(undefined){
 
-    var slice = Array.prototype.slice;
+    var slice = Array.prototype.slice,
+    jObject = require('./object'),
+    jFunction = require('./function.js');
 
     function Parser(f){
 
@@ -384,3 +386,15 @@ var jcon = (function(undefined){
         };
     }
 }());
+
+(function(identifier, mod){
+    var isAmd = typeof define === 'function',
+    isCommonJs = typeof module === 'object' && !!module.exports;
+
+    if (isAmd) {
+        define(mod);
+    } else if (isCommonJs) {
+        module.exports = mod;
+    }
+
+}('jcon', jcon));

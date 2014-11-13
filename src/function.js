@@ -40,6 +40,8 @@
 
 var jFunction = (function(){
 
+    var jObject = require('./object');
+
     /**
      *
      * jFunction 是自定义的函数对象，该对象封装了一个js的原生function
@@ -62,3 +64,15 @@ var jFunction = (function(){
     });
 
 }());
+
+(function(identifier, mod){
+    var isAmd = typeof define === 'function',
+    isCommonJs = typeof module === 'object' && !!module.exports;
+
+    if (isAmd) {
+        define(mod);
+    } else if (isCommonJs) {
+        module.exports = mod;
+    }
+
+}('jFunction', jFunction));
