@@ -59,7 +59,7 @@ var jcon = (function(undefined){
              *
              */
             times: function(min, max){
-                return jcon.times.call(jcon, this, min, max);
+                return jcon.times(this, min, max);
             },
 
             /**
