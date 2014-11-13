@@ -15,7 +15,7 @@
     var parse11 = jcon.string('11');
     var parsedd = jcon.regex(/((\d)\2)/);
 
-    parser11dd = parse11.seq(parsedd).join();
+    parser11dd = parse11.seq(parsedd).joinValue();
 
     console.log(parser11dd.parse(inputs, 0));          //1122
     console.log(parser11dd.parse(inputs, 4));          //1133
@@ -25,7 +25,7 @@
 
     var parseUntil = jcon.until(function(chr){
         return parseInt(chr,10) < 6;
-    }).join();
+    }).joinValue();
 
     console.log( parseUntil.parse(inputs, 12) );
 
@@ -40,11 +40,11 @@
     console.log(parseLazy.parse(inputs, 12));
 
 
-    parser11dd_time2 = parser11dd.times( 0, 2).join();
+    parser11dd_time2 = parser11dd.times( 0, 2).joinValue();
 
     console.log(parser11dd_time2.parse(inputs, 0));
 
-    console.log( jcon.string('abc').seq(jcon.regex(/\d\d\d/)).join().times(0,2).join().parse('abc123abc456',0) );
+    console.log( jcon.string('abc').seq(jcon.regex(/\d\d\d/)).joinValue().times(0,2).joinValue().parse('abc123abc456',0) );
 
 
 
@@ -54,7 +54,7 @@
 
     var bracketOpt = jcon.lazy(function(){
         return bracket.or(jcon.string(''));
-    }).join();
+    }).joinValue();
 
     bracket = left.seq(bracketOpt, right);
 

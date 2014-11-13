@@ -80,14 +80,14 @@ var jcon = (function(undefined){
             },
 
             /**
-             * @method join
+             * @method joinValue
              *
              * @param {string} separator 将数组形式的result.value连接为字符串形式时使用的分隔符，默认为空字符串''
              *
              * @desc 对当前解析器函数对象执行后的结果的value值，进行合并
              *
              */
-            join: function(separator){
+            joinValue: function(separator){
 
                 separator = separator || '';
                 return this.process(function(result){
