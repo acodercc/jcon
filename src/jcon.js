@@ -63,6 +63,23 @@ var jcon = (function(undefined){
             },
 
             /**
+             * @method process
+             *
+             * @param {function} proc
+             *
+             * @desc 对当前解析器函数对象的结果进行指定的处理
+             *
+             */
+            process: function(proc){
+                var self = this;
+                return Parser(function(stream, index){
+                    var result = self.parse(stream, index);
+                    result = proc(result) || result;
+                    return result;
+                });
+            },
+
+            /**
              * @method join
              *
              * @param {string} separator 将数组形式的result.value连接为字符串形式时使用的分隔符，默认为空字符串''
@@ -71,16 +88,17 @@ var jcon = (function(undefined){
              *
              */
             join: function(separator){
-                var self = this;
-                return Parser(function(stream, index){
-                    var result = self.parse(stream, index);
-                    if(result.success && result.value instanceof Array){
-                        result.value = result.value.join(separator||'');
-                    }
 
-                    return result;
+                separator = separator || '';
+                return this.process(function(result){
+                    if(!!result.success && result.value instanceof Array){
+                        result.value = result.value.join(separator);
+                    }
                 });
             }
+
+
+
         }).initialize(f);
     }
 
