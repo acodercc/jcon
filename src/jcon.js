@@ -17,6 +17,7 @@ var jcon = (function(undefined){
              *
              */
             parse: function(){
+                arguments[1] = arguments[1] || 0;
                 return this.__fun__.apply(this, arguments);
             },
 
