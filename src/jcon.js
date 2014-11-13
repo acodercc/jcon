@@ -23,91 +23,43 @@ var jcon = (function(undefined){
             /**
              * @method seq
              *
-             * @param {Array:function} arguments      n个将要被以顺序方式组合的解析器
+             * @param {Array:Parser}
              *
-             * @desc  进行解析器的顺序组合
+             * @desc 使用this指向的当前解析器，和arguments中的解析器，进行连接运算，产生新的连接解析器
+             *
              */
             seq: function(){
                 var args = slice.call(arguments, 0);
                 args.unshift(this);
-
-                return Parser(function(stream, index){
-                    var currentIndex = index,
-                    values = [],
-                    result,
-                    parserIndex = 0,
-                    parser;
-                    while(parser = args[parserIndex++]){
-                        result = parser.parse(stream, currentIndex);
-                        if(result.success){
-                            currentIndex = result.index;
-                            values.push(result.value);
-                        }else{
-                            return fail(currentIndex, '');
-                        }
-                    }
-                    return success(currentIndex, values);
-                });
+                return jcon.seq.apply(jcon, args);
             },
 
             /**
              * @method or
              *
-             * @param {Array:function} arguments        n个选择器，依次尝试匹配，返回第一个成功的
+             * @param {Array:Parser}
              *
-             * @desc 进行解析器的或组合
+             * @desc 使用this指向的当前解析器，和arguments中的解析器，进行或运算，产生新的或解析器
+             *
              */
             or: function(){
                 var args = slice.call(arguments, 0);
                 args.unshift(this);
-
-                return Parser(function(stream, index){
-                    var parser,
-                    parserIndex = 0;
-                    while(parser = args[parserIndex++]){
-                        result = parser.parse(stream, index);
-                        if(result.success){
-                            return success(result.index, result.value);
-                        }
-                    }
-                    return fail(index, 'in or_parser');
-                });
+                return jcon.or.apply(jcon, args);
             },
 
             /**
+             *
              * @method times
              *
-             * @param {function} parse
              * @param {number} min
              * @param {number} max
              *
-             * @desc 在当前输入流上，使用指定的parse进行最少min次，最多max次的匹配
+             * @desc 返回this指向的当前parser的min到max次解析的解析器
              *
              */
             times: function(min, max){
-                var parser = this;
-                return Parser(function(stream, index){
-                    var successTimes = 0,
-                    values = [];
-
-                    do{
-                        result = parser.parse(stream, index);
-                        if(result.success){
-                            index = result.index;
-                            successTimes++;
-                            values.push(result.value);
-                            if(successTimes === max){
-                                break;
-                            }
-                        }
-                    }while(result.success);
-
-                    if(successTimes >= min && successTimes <= max){
-                        return success(index, values);
-                    }else{
-                        return fail(index, '');
-                    }
-                });
+                return jcon.times.call(jcon, this, min, max);
             },
 
             /**
@@ -289,6 +241,93 @@ var jcon = (function(undefined){
             return Parser(function(stream, index){
                 var parser = getParser();
                 return parser.parse(stream, index);
+            });
+        },
+
+        /**
+         * @method seq
+         *
+         * @param {Array:Parser} arguments      n个将要被以顺序方式组合的解析器
+         *
+         * @desc  进行解析器的顺序组合
+         */
+        seq: function(){
+            var args = slice.call(arguments, 0);
+
+            return Parser(function(stream, index){
+                var currentIndex = index,
+                values = [],
+                result,
+                parserIndex = 0,
+                parser;
+                while(parser = args[parserIndex++]){
+                    result = parser.parse(stream, currentIndex);
+                    if(result.success){
+                        currentIndex = result.index;
+                        values.push(result.value);
+                    }else{
+                        return fail(currentIndex, '');
+                    }
+                }
+                return success(currentIndex, values);
+            });
+        },
+
+        /**
+         * @method or
+         *
+         * @param {Array:Parser} arguments        n个选择器，依次尝试匹配，返回第一个成功的
+         *
+         * @desc 进行解析器的或组合
+         */
+        or: function(){
+            var args = slice.call(arguments, 0);
+
+            return Parser(function(stream, index){
+                var parser,
+                parserIndex = 0;
+                while(parser = args[parserIndex++]){
+                    result = parser.parse(stream, index);
+                    if(result.success){
+                        return success(result.index, result.value);
+                    }
+                }
+                return fail(index, 'in or_parser');
+            });
+        },
+
+        /**
+         * @method times
+         *
+         * @param {Parser} parser
+         * @param {number} min
+         * @param {number} max
+         *
+         * @desc 在当前输入流上，使用指定的parse进行最少min次，最多max次的匹配
+         *
+         */
+        times: function(parser, min, max){
+            return Parser(function(stream, index){
+                var successTimes = 0,
+                values = [];
+
+                do{
+                    result = parser.parse(stream, index);
+                    if(result.success){
+                        index = result.index;
+                        successTimes++;
+                        values.push(result.value);
+                        if(successTimes === max){
+                            break;
+                        }
+                    }
+                }while(result.success);
+
+                if(successTimes >= min && successTimes <= max){
+                    return success(index, values);
+                }else{
+                    return fail(index, '');
+                }
             });
         }
 
