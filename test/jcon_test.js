@@ -3,7 +3,7 @@ module.exports = (function(){
 
 
     return {
-        parse_base_generator: {
+        jcon: {
             string: function(test){
                 test.equal(jcon.string('takumi4ichi').parse('takumi4ichi').value, 'takumi4ichi', 'jcon.string ok');
                 test.done();
