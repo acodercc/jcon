@@ -1,3 +1,8 @@
+/**
+ *
+ * 针对jcon命名空间下的各个基础的解析器生成函数编写单元测试
+ *
+ */
 module.exports = (function(){
     var jcon = require('../src/jcon');
 

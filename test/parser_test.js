@@ -1,3 +1,8 @@
+/**
+ *
+ * 针对parser实例的各个组合子（解析器的组合函数）编写单元测试
+ *
+ */
 module.exports = (function(){
 
     var jcon = require('../src/jcon');
