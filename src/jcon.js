@@ -66,6 +66,41 @@ var jcon = (function(undefined){
             },
 
             /**
+             *
+             * @method least
+             *
+             * @param {number} min
+             *
+             * @desc 返回this指向的当前parser的{{最少min次}}解析的解析器
+             *
+             */
+            least: function(min){
+                return this.times(min, Infinity);
+            },
+
+            /**
+             * @method most
+             *
+             * @param {number} max
+             *
+             * @desc 返回this指向的当前parser的{{最多max次}}解析的解析器
+             *
+             */
+            most: function(max){
+                return this.times(0, max);
+            },
+
+            /**
+             * @method many
+             *
+             * @desc 将当前解析器封装为进行{{0或尽量多的任意次}}匹配当前输入流的新解析器
+             *
+             */
+            many: function(){
+                return this.least(0);       //equal return this.most(Infinity);
+            },
+
+            /**
              * @method process
              *
              * @param {function} proc
