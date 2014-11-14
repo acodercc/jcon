@@ -19,8 +19,9 @@ var jcon = (function(undefined){
              *
              */
             parse: function(){
-                arguments[1] = arguments[1] || 0;
-                return this.__fun__.apply(this, arguments);
+                var args = slice.call(arguments, 0);
+                args[1] = args[1] || 0;
+                return this.__fun__.apply(this, args);
             },
 
             /**
