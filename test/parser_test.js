@@ -12,7 +12,11 @@ module.exports = (function(){
 
             test.deepEqual(p1.seq(p2).parse('12').value, ['1','2'], 'seq ok!');
             test.deepEqual(p1.seq(p2, p3).parse('123').value, ['1', '2', '3'], 'seq ok!');
-            test.deepEqual(p1.seq(p2, p3).seq(p4).parse('1234').value, ['1', '2', '3', '4'], 'seq ok!');
+
+
+            //seq创建的parser，会创建一层数组结构，将被连接的多个parser的result.value置为数组成员
+            //所以每次对seq的调用，都会创建一层数组结构，形成多层深的数组
+            test.deepEqual(p1.seq(p2, p3).seq(p4).parse('1234').value, [['1', '2', '3'], '4'], 'seq ok!');
 
             test.done();
         },
@@ -26,6 +30,7 @@ module.exports = (function(){
 
         },
         times: function(test){
+            test.done();
         },
         least: function(test){
         },
