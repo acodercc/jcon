@@ -26,27 +26,54 @@ module.exports = (function(){
 
                 test.done();
             },
+
             or: function(test){
 
 
                 test.equal(p1.or(p2, p3).parse('3').value, '3', 'or ok!');
                 test.equal(p1.or(p2,p3).or(p4).parse('4').value, '4', 'or ok!');
+                test.equal(p1.or(p2,p3).or(p4).parse('2').value, '2', 'or ok!');
 
                 test.done();
 
             },
             times: function(test){
+
+                test.deepEqual(p1.times(0, 1).parse('1').value, ['1'], 'times ok!');
+                test.deepEqual(p1.times(0, 2).parse('111').value, ['1','1'], 'times ok!');
+                test.deepEqual(p1.times(1, Infinity).parse('').success, false, 'times ok!');
+
                 test.done();
             },
             least: function(test){
+
+                test.deepEqual(p1.least(1).parse('1').value, ['1'], 'least ok!');
+                test.equal(p1.least(2).parse('1').success, false, 'least ok!');
+                test.deepEqual(p1.least(2).parse('111').value, ['1','1','1'], 'least ok!');
+                test.done();
             },
             most: function(test){
+                test.deepEqual(p1.most(2).parse('111').value, ['1', '1'], 'most ok!');
+                test.deepEqual(p1.most(2).parse('1').value, ['1'], 'most ok!');
+                test.done();
             },
             many: function(test){
+                test.deepEqual(p1.many().parse('111').value, ['1','1','1'], 'many ok!');
+                test.done();
             },
             process: function(test){
+                var numberParser = p1.process(function(ret){
+                    ret.value = parseInt(ret.value, 10);
+                });
+
+                test.strictEqual(numberParser.parse('1').value, 1, 'process ok!')
+                test.done();
             },
             joinValue: function(test){
+
+                test.equal(p1.seq(p2, p3, p4).joinValue().parse('1234').value, '1234', 'joinValue ok!');
+
+                test.done();
             }
         }
     };
