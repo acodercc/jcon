@@ -1,12 +1,19 @@
 /**
  *
- * css-selector
+ * 基于jcon的css-selector的parser
+ *
+ *
+ *  css3-selector的parser项目(基于jcon):
+ *      https://github.com/takumi4ichi/shorthair
  *
  */
 
 (function(){
 
     var jcon = require('../src/jcon');
+
+
+
 
     var className = jcon.regex(/\.\w+/);
     var idName = jcon.regex(/\#\w+/);
