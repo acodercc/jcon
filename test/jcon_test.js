@@ -15,6 +15,9 @@ module.exports = (function(){
             },
             regex: function(test){
                 test.equal(jcon.regex(/\.(\w+)/, 1).parse('.item').value, 'item', 'jcon.regex ok');
+
+                //必须让正则解析器有解析空字符串仍解析成功的能力，即模式本身可以是一个空串
+                test.equal(jcon.regex(/1?/).parse('').value, '', 'jcon.regex ok!');
                 test.done();
             },
             success: function(test){

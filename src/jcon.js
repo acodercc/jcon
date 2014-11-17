@@ -190,7 +190,7 @@ var jcon = (function(undefined){
             return Parser(function(stream, index){
                 var match = re.exec(stream.slice(index));
 
-                if(match && match[grp]){
+                if(match && match[grp] !== undefined){
                     return success(index+match[0].length, match[grp]);
                 }
                 return fail(index, re);
