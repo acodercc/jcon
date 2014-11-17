@@ -39,6 +39,15 @@ var jcon = (function(undefined){
             },
 
             /**
+             * @method seqJoin
+             * 
+             * @desc 将当前解析器上进行seq与joinValue两次函数变换
+             */
+            seqJoin: function(){
+                return this.seq.apply(this, arguments).joinValue();
+            },
+
+            /**
              * @method or
              *
              * @param {Array:Parser}
@@ -99,6 +108,15 @@ var jcon = (function(undefined){
              */
             many: function(){
                 return this.least(0);       //equal return this.most(Infinity);
+            },
+
+            /**
+             * @method seqJoin
+             * 
+             * @desc 将当前解析器上进行many与joinValue两次函数变换
+            */
+            manyJoin: function(){
+                return this.many.apply(this, arguments).joinValue();
             },
 
             /**
@@ -338,6 +356,15 @@ var jcon = (function(undefined){
                 }
                 return success(currentIndex, values);
             });
+        },
+
+        /**
+         * @method seqJoin
+         * 
+         * @desc 将当前解析器上进行seq与joinValue两次函数变换
+         */
+        seqJoin: function(){
+            return this.seq.apply(this, arguments).joinValue();
         },
 
         /**
