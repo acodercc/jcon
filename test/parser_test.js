@@ -57,6 +57,12 @@ module.exports = (function(){
                 test.deepEqual(p1.most(2).parse('1').value, ['1'], 'most ok!');
                 test.done();
             },
+            possible: function(test){
+                test.deepEqual(p1.possible().parse('111').value, ['1'], 'most ok!');
+                test.deepEqual(p1.possible().parse('1').value, ['1'], 'most ok!');
+                test.equal(p1.possible().parse('').success, true, 'most ok!');//即使没有匹配到也是成功匹配
+                test.done();
+            },
             many: function(test){
                 test.deepEqual(p1.many().parse('111').value, ['1','1','1'], 'many ok!');
                 test.done();

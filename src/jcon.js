@@ -102,6 +102,16 @@ var jcon = (function(undefined){
             },
 
             /**
+             * @method possible
+             *
+             * @desc 将当前解析器封装为进行0或1次匹配当前输入流的新解析器
+             *
+             */
+            possible: function(){
+                return this.most(1);
+            },
+
+            /**
              * @method process
              *
              * @param {function} proc
