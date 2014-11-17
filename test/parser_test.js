@@ -65,6 +65,7 @@ module.exports = (function(){
             },
             many: function(test){
                 test.deepEqual(p1.many().parse('111').value, ['1','1','1'], 'many ok!');
+                test.equal(p1.many().parse('').success, true, 'many ok!');
                 test.done();
             },
             process: function(test){
