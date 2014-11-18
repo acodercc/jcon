@@ -13,7 +13,74 @@ var jcon = (function(undefined){
 
     function Parser(f){
 
-        return jFunction.create({
+        return jFunction.create(
+
+        //便捷语法
+        {
+            
+            /**
+             * @method seqJoin
+             * 
+             * @desc 将当前解析器上进行seq与joinValue两次函数变换
+             */
+            seqJoin: function(){
+                return this.seq.apply(this, arguments).joinValue();
+            },
+            /**
+             * @method seqJoin
+             * 
+             * @desc 将当前解析器上进行many与joinValue两次函数变换
+            */
+            manyJoin: function(){
+                return this.many.apply(this, arguments).joinValue();
+            }
+
+        },
+
+
+        //尾处理器process及基于尾处理器的尾处理dsl
+        {
+
+            /**
+             * @method process
+             *
+             * @param {function} proc
+             *
+             * @desc 对当前解析器函数对象的结果进行指定的处理
+             *
+             */
+            process: function(proc){
+                var self = this;
+                return Parser(function(stream, index){
+                    var result = self.parse(stream, index);
+                    result = proc(result) || result;
+                    return result;
+                });
+            },
+
+            /**
+             * @method joinValue
+             *
+             * @param {string} separator 将数组形式的result.value连接为字符串形式时使用的分隔符，默认为空字符串''
+             *
+             * @desc 对当前解析器函数对象执行后的结果的value值，进行合并
+             *
+             */
+            joinValue: function(separator){
+
+                separator = separator || '';
+                return this.process(function(result){
+                    if(!!result.success && result.value instanceof Array){
+                        result.value = result.value.join(separator);
+                    }
+                });
+            }
+        },
+
+
+
+
+        {
             /**
              * @method parse
              *
@@ -114,70 +181,9 @@ var jcon = (function(undefined){
             },
 
 
-        },
+        }
         
-        
-        //尾处理器process及基于尾处理器的尾处理dsl
-        {
-
-            /**
-             * @method process
-             *
-             * @param {function} proc
-             *
-             * @desc 对当前解析器函数对象的结果进行指定的处理
-             *
-             */
-            process: function(proc){
-                var self = this;
-                return Parser(function(stream, index){
-                    var result = self.parse(stream, index);
-                    result = proc(result) || result;
-                    return result;
-                });
-            },
-
-            /**
-             * @method joinValue
-             *
-             * @param {string} separator 将数组形式的result.value连接为字符串形式时使用的分隔符，默认为空字符串''
-             *
-             * @desc 对当前解析器函数对象执行后的结果的value值，进行合并
-             *
-             */
-            joinValue: function(separator){
-
-                separator = separator || '';
-                return this.process(function(result){
-                    if(!!result.success && result.value instanceof Array){
-                        result.value = result.value.join(separator);
-                    }
-                });
-            }
-        },
-
-
-        //便捷语法
-        {
-            
-            /**
-             * @method seqJoin
-             * 
-             * @desc 将当前解析器上进行seq与joinValue两次函数变换
-             */
-            seqJoin: function(){
-                return this.seq.apply(this, arguments).joinValue();
-            },
-            /**
-             * @method seqJoin
-             * 
-             * @desc 将当前解析器上进行many与joinValue两次函数变换
-            */
-            manyJoin: function(){
-                return this.many.apply(this, arguments).joinValue();
-            }
-
-        }).initialize(f);
+        ).initialize(f);
     }
 
     /**
