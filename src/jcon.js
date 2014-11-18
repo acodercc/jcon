@@ -181,6 +181,21 @@ var jcon = (function(undefined){
             },
 
 
+            /**
+             * @method lookhead
+             *
+             * @param {parser} lookhead 前瞻解析器
+             *
+             * @desc 当原解析器在当前输入流解析成功后，需要前瞻解析器在原解析器解析后的位置再次解析成功，原解析器才是解析成功的
+             *
+             */
+            lookhead: function(){
+                var args = slice.call(arguments, 0);
+                args.unshift(this);
+
+                return jcon.lookhead.apply(jcon, args);
+            }
+
         }
         
         ).initialize(f);
@@ -308,6 +323,7 @@ var jcon = (function(undefined){
                 return fail(index, 'no in '+ str);
             });
         },
+
 
         /**
          * @method until
@@ -438,6 +454,31 @@ var jcon = (function(undefined){
                     return success(index, values);
                 }else{
                     return fail(index, '');
+                }
+            });
+        },
+
+        /**
+         * @method lookhead
+         *
+         * @param {Parser} parser   原解析器
+         * @param {parser} lookhead 前瞻解析器
+         *
+         * @desc 当原解析器在当前输入流解析成功后，需要前瞻解析器在原解析器解析后的位置再次解析成功，原解析器才是解析成功的
+         *
+         */
+        lookhead: function(parser, lookhead){
+            return Parser(function(stream, index){
+                var result = parser.parse(stream, index);
+                if(result.success){
+
+                    var lookheadResult = lookhead.parse(stream, result.index);
+
+                    if(lookheadResult.success){
+                        return result;
+                    }else{
+                        return fail(index, 'lookhead fail!');
+                    }
                 }
             });
         }
