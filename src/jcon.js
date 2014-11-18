@@ -470,16 +470,17 @@ var jcon = (function(undefined){
         lookhead: function(parser, lookhead){
             return Parser(function(stream, index){
                 var result = parser.parse(stream, index);
+
                 if(result.success){
 
                     var lookheadResult = lookhead.parse(stream, result.index);
 
-                    if(lookheadResult.success){
-                        return result;
-                    }else{
+                    //在原解析器匹配成功时，但lookhead解析器匹配失败时，仍报错
+                    if(!lookheadResult.success){
                         return fail(index, 'lookhead fail!');
                     }
                 }
+                return result;
             });
         }
 

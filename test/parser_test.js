@@ -87,6 +87,8 @@ module.exports = (function(){
                 test.equal(p1.lookhead(jcon.string('a')).parse('1a').value, '1', 'lookhead ok!');
                 test.equal(p1.lookhead(jcon.string('b')).parse('1a').success, false, 'lookhead ok!');
 
+                test.equal(p1.lookhead(jcon.string('a')).parse('2a').success, false, 'lookhead ok!');
+
                 test.done();
             }
         }
