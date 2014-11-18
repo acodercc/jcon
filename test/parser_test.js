@@ -90,6 +90,16 @@ module.exports = (function(){
                 test.equal(p1.lookhead(jcon.string('a')).parse('2a').success, false, 'lookhead ok!');
 
                 test.done();
+            },
+            skip: function(test){
+
+                test.deepEqual(p1.seq(p2,p3.skip(),p4).parse('1234').value, ['1','2','4'], 'skip ok!');
+
+                test.deepEqual(p1.seq(p2.skip().many(), p3).parse('122223').value, ['1', [], '3'], 'skip ok!');
+
+                test.deepEqual(p1.seq(p2.many().skip(), p3).parse('122223').value, ['1', '3'], 'skip ok!');
+
+                test.done();
             }
         }
     };

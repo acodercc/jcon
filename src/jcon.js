@@ -74,6 +74,17 @@ var jcon = (function(undefined){
                         result.value = result.value.join(separator);
                     }
                 });
+            },
+
+            /**
+             * @method skip
+             *
+             * @desc 将当前解析器的结果值加入skip的flag，在seq,times等合并解析结果时忽略该解析器的值
+             */
+            skip: function(){
+                return this.process(function(result){
+                    result.skip = true;
+                });
             }
         },
 
@@ -247,6 +258,7 @@ var jcon = (function(undefined){
             });
         },
 
+
         /**
          * @method success
          *
@@ -382,7 +394,9 @@ var jcon = (function(undefined){
                     result = parser.parse(stream, currentIndex);
                     if(result.success){
                         currentIndex = result.index;
-                        values.push(result.value);
+                        if(!result.skip){
+                            values.push(result.value);
+                        }
                     }else{
                         return fail(currentIndex, '');
                     }
@@ -443,7 +457,9 @@ var jcon = (function(undefined){
                     if(result.success){
                         index = result.index;
                         successTimes++;
-                        values.push(result.value);
+                        if(!result.skip){
+                            values.push(result.value);
+                        }
                         if(successTimes === max){
                             break;
                         }
