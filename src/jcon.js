@@ -38,14 +38,6 @@ var jcon = (function(undefined){
                 return jcon.seq.apply(jcon, args);
             },
 
-            /**
-             * @method seqJoin
-             * 
-             * @desc 将当前解析器上进行seq与joinValue两次函数变换
-             */
-            seqJoin: function(){
-                return this.seq.apply(this, arguments).joinValue();
-            },
 
             /**
              * @method or
@@ -110,14 +102,6 @@ var jcon = (function(undefined){
                 return this.least(0);       //equal return this.most(Infinity);
             },
 
-            /**
-             * @method seqJoin
-             * 
-             * @desc 将当前解析器上进行many与joinValue两次函数变换
-            */
-            manyJoin: function(){
-                return this.many.apply(this, arguments).joinValue();
-            },
 
             /**
              * @method possible
@@ -128,6 +112,13 @@ var jcon = (function(undefined){
             possible: function(){
                 return this.most(1);
             },
+
+
+        },
+        
+        
+        //尾处理器process及基于尾处理器的尾处理dsl
+        {
 
             /**
              * @method process
@@ -163,8 +154,28 @@ var jcon = (function(undefined){
                     }
                 });
             }
+        },
 
 
+        //便捷语法
+        {
+            
+            /**
+             * @method seqJoin
+             * 
+             * @desc 将当前解析器上进行seq与joinValue两次函数变换
+             */
+            seqJoin: function(){
+                return this.seq.apply(this, arguments).joinValue();
+            },
+            /**
+             * @method seqJoin
+             * 
+             * @desc 将当前解析器上进行many与joinValue两次函数变换
+            */
+            manyJoin: function(){
+                return this.many.apply(this, arguments).joinValue();
+            }
 
         }).initialize(f);
     }
