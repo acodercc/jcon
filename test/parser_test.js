@@ -26,6 +26,10 @@ module.exports = (function(){
 
                 test.done();
             },
+            flat: function(test){
+                test.deepEqual(p1.seq(p2, p3).seq(p4).flat().parse('1234').value, ['1','2','3', '4'], 'flat ok!');
+                test.done();
+            },
 
             or: function(test){
 
@@ -86,7 +90,6 @@ module.exports = (function(){
                 test.equal(jcon.lookhead(p1,jcon.string('a')).parse('1a').value, '1', 'lookhead ok!');
                 test.equal(p1.lookhead(jcon.string('a')).parse('1a').value, '1', 'lookhead ok!');
                 test.equal(p1.lookhead(jcon.string('b')).parse('1a').success, false, 'lookhead ok!');
-
                 test.equal(p1.lookhead(jcon.string('a')).parse('2a').success, false, 'lookhead ok!');
 
                 test.done();
@@ -94,9 +97,7 @@ module.exports = (function(){
             skip: function(test){
 
                 test.deepEqual(p1.seq(p2,p3.skip(),p4).parse('1234').value, ['1','2','4'], 'skip ok!');
-
                 test.deepEqual(p1.seq(p2.skip().many(), p3).parse('122223').value, ['1', [], '3'], 'skip ok!');
-
                 test.deepEqual(p1.seq(p2.many().skip(), p3).parse('122223').value, ['1', '3'], 'skip ok!');
 
                 test.done();

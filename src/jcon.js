@@ -77,6 +77,27 @@ var jcon = (function(undefined){
             },
 
             /**
+             * @method flat
+             *
+             * @desc 将当前解析器解析出的value值进行数组平坦化(非深度平坦化，只针对当前结果数组中的每个元素，如是数组则合并，如不是数组则保持，并不进行递归
+             */
+            flat: function(){
+                return this.process(function(result){
+                    if(!!result.success && result.value instanceof Array){
+                        var flats = [];
+                        for(var i=0,len=result.value.length; i<len; i++){
+                            if(result.value[i] instanceof Array){
+                                flats = flats.concat(result.value[i]);
+                            }else{
+                                flats.push(result.value[i]);
+                            }
+                        }
+                        result.value = flats;
+                    }
+                });
+            },
+
+            /**
              * @method skip
              *
              * @desc 将当前解析器的结果值加入skip的flag，在seq,times等合并解析结果时忽略该解析器的值
