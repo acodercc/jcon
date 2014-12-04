@@ -101,6 +101,14 @@ module.exports = (function(){
                 test.deepEqual(p1.seq(p2.many().skip(), p3).parse('122223').value, ['1', '3'], 'skip ok!');
 
                 test.done();
+            },
+
+            type: function(test){
+
+                test.equal(p1.type('number').parse('1').type, 'number', 'type ok!');
+
+                test.done();
+
             }
         }
     };

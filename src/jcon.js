@@ -106,6 +106,18 @@ var jcon = (function(undefined){
                 return this.process(function(result){
                     result.skip = true;
                 });
+            },
+
+            /**
+             * @method type
+             * @param {string} type
+             *
+             * @desc 设置当前解析器解析结果的类型
+             */
+            type: function(type){
+                return this.process(function(result){
+                    result.type = type;
+                });
             }
         },
 
