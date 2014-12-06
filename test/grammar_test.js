@@ -22,7 +22,7 @@ module.exports = {
                 return jcon.or(bracket, epsilon);
             });
 
-            bracket = jcon.seq(left, bracketOpt, right).joinValue();
+            bracket = jcon.seq(left, bracketOpt, right);
 
             test.equal(bracket.parse('').value, null, 'parse "" is null');
             test.equal(bracket.parse('()').value, '()', 'parse "()" is ()');

@@ -57,11 +57,6 @@ module.exports = (function(){
 
                 test.equal(currentSecondParser.parse((new Date).getSeconds()+'').success, true, 'jcon.lazy ok');
                 test.done();
-            },
-
-            seqJoin: function(test){
-                test.equal(jcon.seqJoin(jcon.string('1'), jcon.string('2')).parse('12').value, '12', 'seq ok!');
-                test.done();
             }
         }
     };

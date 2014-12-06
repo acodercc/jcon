@@ -15,29 +15,6 @@ var jcon = (function(undefined){
 
         return jFunction.create(
 
-        //便捷语法
-        {
-            
-            /**
-             * @method seqJoin
-             * 
-             * @desc 将当前解析器上进行seq与joinValue两次函数变换
-             */
-            seqJoin: function(){
-                return this.seq.apply(this, arguments).joinValue();
-            },
-            /**
-             * @method seqJoin
-             * 
-             * @desc 将当前解析器上进行many与joinValue两次函数变换
-            */
-            manyJoin: function(){
-                return this.many.apply(this, arguments).joinValue();
-            }
-
-        },
-
-
         //尾处理器process及基于尾处理器的尾处理dsl
         {
 
@@ -55,24 +32,6 @@ var jcon = (function(undefined){
                     var result = self.parse(stream, index);
                     result = proc(result) || result;
                     return result;
-                });
-            },
-
-            /**
-             * @method joinValue
-             *
-             * @param {string} separator 将数组形式的result.value连接为字符串形式时使用的分隔符，默认为空字符串''
-             *
-             * @desc 对当前解析器函数对象执行后的结果的value值，进行合并
-             *
-             */
-            joinValue: function(separator){
-
-                separator = separator || '';
-                return this.process(function(result){
-                    if(!!result.success && result.value instanceof Array){
-                        result.value = result.value.join(separator);
-                    }
                 });
             },
 
@@ -263,7 +222,7 @@ var jcon = (function(undefined){
         string: function(str){
             return Parser(function(stream, index){
                 if(stream.substr(index, str.length) === str){
-                    return success(index + str.length, str);
+                    return success(index, str);
                 }else{
                     return fail(index, str);
                 }
@@ -285,7 +244,7 @@ var jcon = (function(undefined){
                 var match = re.exec(stream.slice(index));
 
                 if(match && match[grp] !== undefined){
-                    return success(index+match[0].length, match[grp]);
+                    return success(index, match[grp]);
                 }
                 return fail(index, re);
             });
@@ -330,7 +289,7 @@ var jcon = (function(undefined){
         chr: function(chr){
             return Parser(function(stream, index){
                 if(stream[index] === chr){
-                    return success(index+1, chr);
+                    return success(index, chr);
                 }
                 return fail(index, chr);
             });
@@ -347,7 +306,7 @@ var jcon = (function(undefined){
         inStr: function(str){
             return Parser(function(stream, index){
                 if(str.indexOf(stream[index])>-1){
-                    return success(index+1, stream[index]);
+                    return success(index, stream[index]);
                 }
                 return fail(index, 'in ' + str);
             });
@@ -363,7 +322,7 @@ var jcon = (function(undefined){
         noInStr: function(str){
             return Parser(function(stream, index){
                 if(str.indexOf(stream[index]) === -1){
-                    return success(index+1, stream[index]);
+                    return success(index, stream[index]);
                 }
                 return fail(index, 'no in '+ str);
             });
@@ -380,10 +339,11 @@ var jcon = (function(undefined){
         until: function(assert){
             return Parser(function(stream, index){
                 var values = [],
+                currentIndex = index,
                 chr;
-                while(assert(stream[index])){
-                    values.push(stream[index]);
-                    index++;
+                while(assert(stream[currentIndex])){
+                    values.push(stream[currentIndex]);
+                    currentIndex++;
                 }
                 if(values.length){
                     return success(index, values);
@@ -420,32 +380,26 @@ var jcon = (function(undefined){
             return Parser(function(stream, index){
                 var currentIndex = index,
                 values = [],
+                results = [],
                 result,
                 parserIndex = 0,
                 parser;
                 while(parser = args[parserIndex++]){
                     result = parser.parse(stream, currentIndex);
                     if(result.success){
-                        currentIndex = result.index;
+                        currentIndex = result.endIndex;
                         if(!result.skip){
                             values.push(result.value);
+                            results.push(result);
                         }
                     }else{
                         return fail(currentIndex, '');
                     }
                 }
-                return success(currentIndex, values);
+                return success(index, values.join(''), {rhs: results, endIndex: currentIndex});
             });
         },
 
-        /**
-         * @method seqJoin
-         * 
-         * @desc 将当前解析器上进行seq与joinValue两次函数变换
-         */
-        seqJoin: function(){
-            return this.seq.apply(this, arguments).joinValue();
-        },
 
         /**
          * @method or
@@ -463,7 +417,7 @@ var jcon = (function(undefined){
                 while(parser = args[parserIndex++]){
                     result = parser.parse(stream, index);
                     if(result.success){
-                        return success(result.index, result.value);
+                        return success(index, result.value);
                     }
                 }
                 return fail(index, 'in or_parser');
@@ -483,15 +437,19 @@ var jcon = (function(undefined){
         times: function(parser, min, max){
             return Parser(function(stream, index){
                 var successTimes = 0,
-                values = [];
+                result,
+                values = [],
+                results = [],
+                endIndex = index;       //因为会有skip-flag的存在，所以endIndex的计算不能使用startIndex+value.length
 
                 do{
-                    result = parser.parse(stream, index);
+                    result = parser.parse(stream, result ? result.endIndex : index);
                     if(result.success){
-                        index = result.index;
+                        endIndex = result.endIndex;
                         successTimes++;
                         if(!result.skip){
                             values.push(result.value);
+                            results.push(result);
                         }
                         if(successTimes === max){
                             break;
@@ -500,7 +458,7 @@ var jcon = (function(undefined){
                 }while(result.success);
 
                 if(successTimes >= min && successTimes <= max){
-                    return success(index, values);
+                    return success(index, values.join(''), {rhs: results, endIndex: endIndex});
                 }else{
                     return fail(index, '');
                 }
@@ -522,7 +480,7 @@ var jcon = (function(undefined){
 
                 if(result.success){
 
-                    var lookheadResult = lookhead.parse(stream, result.index);
+                    var lookheadResult = lookhead.parse(stream, result.endIndex);
 
                     //在原解析器匹配成功时，但lookhead解析器匹配失败时，仍报错
                     if(!lookheadResult.success){
@@ -540,15 +498,18 @@ var jcon = (function(undefined){
      * 
      * @param {number} index            匹配成功的位置
      * @param {string} value            匹配到的值
+     * @param {object} more             更多的信息
      */
-    function success(index, value){
-        return {
+    function success(index, value, more){
+        return jObject.create({
             success: true,
-            index: index,
+            startIndex: index,
+            endIndex: index + value.length,
+            length: value.length,
             value: value,
             expected: '',
             lastIndex: -1
-        };
+        }, more);
     }
 
     /**
@@ -556,15 +517,16 @@ var jcon = (function(undefined){
      * 
      * @param {number} lastIndex        匹配失败的位置
      * @param {string} expected         期望匹配到的值
+     * @param {object} more             更多的信息
      */
-    function fail(lastIndex, expected){
-        return {
+    function fail(lastIndex, expected, more){
+        return jObject.create({
             success: false,
             index: -1,
             value: null,
             expected: expected,
             lastIndex: lastIndex
-        };
+        }, more);
     }
 }());
 
