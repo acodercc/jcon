@@ -101,8 +101,6 @@ module.exports = (function(){
             },
             skip: function(test){
 
-
-
                 test.deepEqual(p1.seq(p2,p3.skip(),p4).parse('1234').value, '124', 'skip 124 ok!');
                 test.deepEqual(p1.seq(p2.skip().many(), p3).parse('122223').value, '13', 'skip 13 ok!');
                 test.deepEqual(p1.seq(p2.many().skip(), p4).parse('122224').value, '14', 'skip 14 ok!');
@@ -114,6 +112,13 @@ module.exports = (function(){
 
                 test.equal(p1.type('number').parse('1').type, 'number', 'type ok!');
 
+                test.done();
+
+            },
+
+            ast: function(test){
+
+                test.deepEqual(p1.seq(p2.setAst(),p3,p4.setAst()).parse('1234').ast().map(function(r){return r.value}), ['2', '4'], 'ast ok!');
                 test.done();
 
             }

@@ -11,6 +11,30 @@ var jcon = (function(undefined){
     jObject = require('./object'),
     jFunction = require('./function.js');
 
+    var result = jObject.create({
+        ast: function(){
+            var astTree = [];
+            /**
+             * @function visitParseTree
+             *
+             * @desc 从解析树到语法树
+             *
+             */
+            function visitParseTree(result){
+                if(!!result.isAst){
+                    astTree.push(result);
+                }
+                if(result.rhs){
+                    for(var i=0; i<result.rhs.length; i++){
+                        visitParseTree(result.rhs[i]);
+                    }
+                }
+            }
+            visitParseTree(this);
+            return astTree;
+        }
+    });
+
     function Parser(f){
 
         return jFunction.create(
@@ -76,11 +100,19 @@ var jcon = (function(undefined){
             type: function(type){
                 return this.process(function(result){
                     result.type = type;
+                    if(result.rhs){
+                        var t = result.rhs;
+                        delete result['rhs'];
+                        result.rhs = t;
+                    }
+                });
+            },
+            setAst: function(){
+                return this.process(function(result){
+                    result.isAst = true;
                 });
             }
         },
-
-
 
 
         {
@@ -388,7 +420,7 @@ var jcon = (function(undefined){
                     result = parser.parse(stream, currentIndex);
                     if(result.success){
                         currentIndex = result.endIndex;
-                        if(!result.skip){
+                        if(!result.skip && result.value !== ""){
                             values.push(result.value);
                             results.push(result);
                         }
@@ -413,11 +445,13 @@ var jcon = (function(undefined){
 
             return Parser(function(stream, index){
                 var parser,
+                result,
                 parserIndex = 0;
                 while(parser = args[parserIndex++]){
                     result = parser.parse(stream, index);
                     if(result.success){
-                        return success(index, result.value);
+                        //return success(index, result.value);
+                        return result;
                     }
                 }
                 return fail(index, 'in or_parser');
@@ -447,7 +481,7 @@ var jcon = (function(undefined){
                     if(result.success){
                         endIndex = result.endIndex;
                         successTimes++;
-                        if(!result.skip){
+                        if(!result.skip && result.value !== ""){
                             values.push(result.value);
                             results.push(result);
                         }
@@ -493,6 +527,8 @@ var jcon = (function(undefined){
 
     });
 
+
+
     /**
      * @function success
      * 
@@ -501,7 +537,7 @@ var jcon = (function(undefined){
      * @param {object} more             更多的信息
      */
     function success(index, value, more){
-        return jObject.create({
+        return result.create({
             success: true,
             startIndex: index,
             endIndex: index + value.length,
