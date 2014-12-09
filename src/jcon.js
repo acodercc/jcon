@@ -13,7 +13,21 @@ var jcon = (function(undefined){
 
     var result = jObject.create({
         ast: function(){
-            var astTree = [];
+            var root = [],
+            current = root,
+            stack = [root];
+
+            /**
+             * 
+             */
+            function transAstNode(result){
+                return {
+                    type: result.astType || result.type,
+                    value: result.value,
+                    childs: []
+                };
+            }
+
             /**
              * @function visitParseTree
              *
@@ -21,17 +35,27 @@ var jcon = (function(undefined){
              *
              */
             function visitParseTree(result){
+                var astNode;
                 if(!!result.isAst){
-                    astTree.push(result);
+                    astNode = transAstNode(result);
+                    current.push(astNode);
                 }
                 if(result.rhs){
+                    if(astNode && astNode.childs instanceof Array){
+                        current = astNode.childs;
+                        stack.push(current);
+                    }
                     for(var i=0; i<result.rhs.length; i++){
                         visitParseTree(result.rhs[i]);
+                    }
+                    if(astNode && astNode.childs instanceof Array){
+                        stack.pop()
+                        current = stack[stack.length-1];
                     }
                 }
             }
             visitParseTree(this);
-            return astTree;
+            return root;
         }
     });
 
@@ -100,16 +124,12 @@ var jcon = (function(undefined){
             type: function(type){
                 return this.process(function(result){
                     result.type = type;
-                    if(result.rhs){
-                        var t = result.rhs;
-                        delete result['rhs'];
-                        result.rhs = t;
-                    }
                 });
             },
-            setAst: function(){
+            setAst: function(astType){
                 return this.process(function(result){
                     result.isAst = true;
+                    result.astType = astType || result.type;
                 });
             }
         },
