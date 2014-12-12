@@ -47,6 +47,9 @@ var jcon = (function(undefined){
                     for(var i=0; i<result.rhs.length; i++){
                         visitParseTree(result.rhs[i]);
                     }
+                    if(astNode && astNode.childs instanceof Array && !astNode.childs.length){
+                        delete astNode.childs;
+                    }
                     if(!!result.isAst){
                         stack.pop()
                         current = stack[stack.length-1];
