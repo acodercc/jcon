@@ -31,8 +31,7 @@ module.exports = {
             test.deepEqual(astTree, [
                 {
                     type: 'element_name',
-                    value: 'div',
-                    childs: []
+                    value: 'div'
                 },
                 {
                     type: 'pseudo',
@@ -40,13 +39,11 @@ module.exports = {
                     childs: [
                         {
                             type: 'name',
-                            value: 'nth-child',
-                            childs: []
+                            value: 'nth-child'
                         },
                         {
                             type: 'param',
-                            value: '2n-1',
-                            childs: []
+                            value: '2n-1'
                         }
                     ]
                 }

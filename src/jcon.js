@@ -23,8 +23,7 @@ var jcon = (function(undefined){
             function transAstNode(result){
                 return {
                     type: result.astType || result.type,
-                    value: result.value,
-                    childs: []
+                    value: result.value
                 };
             }
 
@@ -41,14 +40,14 @@ var jcon = (function(undefined){
                     current.push(astNode);
                 }
                 if(result.rhs){
-                    if(astNode && astNode.childs instanceof Array){
-                        current = astNode.childs;
+                    if(!!result.isAst){
+                        current = astNode.childs = [];
                         stack.push(current);
                     }
                     for(var i=0; i<result.rhs.length; i++){
                         visitParseTree(result.rhs[i]);
                     }
-                    if(astNode && astNode.childs instanceof Array){
+                    if(!!result.isAst){
                         stack.pop()
                         current = stack[stack.length-1];
                     }
