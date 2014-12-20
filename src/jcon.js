@@ -458,7 +458,7 @@ var jcon = (function(undefined){
         /**
          * @method or
          *
-         * @param {Array:Parser} arguments        n个选择器，依次尝试匹配，返回第一个成功的
+         * @param {Array:Parser} arguments        n个选择器，依次尝试匹配，返回最长的成功的
          *
          * @desc 进行解析器的或组合
          */
@@ -468,15 +468,20 @@ var jcon = (function(undefined){
             return Parser(function(stream, index){
                 var parser,
                 result,
+                results = [],
                 parserIndex = 0;
                 while(parser = args[parserIndex++]){
                     result = parser.parse(stream, index);
                     if(result.success){
-                        //return success(index, result.value);
-                        return result;
+                        results.push(result);
                     }
                 }
-                return fail(index, 'in or_parser');
+                if(results.length){
+                    results.sort(function(a, b){return b.endIndex - a.endIndex;});
+                    return results[0];
+                }else{
+                    return fail(index, 'in or_parser');
+                }
             });
         },
 
