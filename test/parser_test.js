@@ -99,6 +99,15 @@ module.exports = (function(){
 
                 test.done();
             },
+            noLookhead: function(test){
+                test.equal(jcon.noLookhead(p1,jcon.string('a')).parse('1b').value, '1', 'noLookhead ok!');
+                test.equal(jcon.noLookhead(p1,jcon.string('a')).parse('1a').success, false, 'noLookhead ok!');
+                test.equal(p1.noLookhead(jcon.string('a')).parse('1a').success, false, 'noLookhead ok!');
+                test.equal(p1.noLookhead(jcon.string('a')).parse('1b').success, true, 'noLookhead ok!');
+                test.equal(p1.noLookhead(jcon.string('a')).parse('2b').success, false, 'noLookhead ok!');
+
+                test.done();
+            },
             skip: function(test){
 
                 test.deepEqual(p1.seq(p2,p3.skip(),p4).parse('1234').value, '124', 'skip 124 ok!');

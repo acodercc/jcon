@@ -241,7 +241,7 @@ var jcon = (function(undefined){
             /**
              * @method lookhead
              *
-             * @param {parser} lookhead 前瞻解析器
+             * @param {parser} lookhead 积极前瞻解析器
              *
              * @desc 当原解析器在当前输入流解析成功后，需要前瞻解析器在原解析器解析后的位置再次解析成功，原解析器才是解析成功的
              *
@@ -251,6 +251,21 @@ var jcon = (function(undefined){
                 args.unshift(this);
 
                 return jcon.lookhead.apply(jcon, args);
+            },
+
+            /**
+             * @method noLookhead
+             *
+             * @param {parser} noLookhead 消极前瞻解析器
+             *
+             * @desc 当原解析器在当前输入流解析成功后，需要前瞻解析器在原解析器解析后的位置再次解析失败，原解析器才是解析成功的
+             *
+             */
+            noLookhead: function(){
+                var args = slice.call(arguments, 0);
+                args.unshift(this);
+
+                return jcon.noLookhead.apply(jcon, args);
             }
 
         }
@@ -530,7 +545,7 @@ var jcon = (function(undefined){
          * @method lookhead
          *
          * @param {Parser} parser   原解析器
-         * @param {parser} lookhead 前瞻解析器
+         * @param {parser} lookhead 积极前瞻解析器
          *
          * @desc 当原解析器在当前输入流解析成功后，需要前瞻解析器在原解析器解析后的位置再次解析成功，原解析器才是解析成功的
          *
@@ -546,6 +561,31 @@ var jcon = (function(undefined){
                     //在原解析器匹配成功时，但lookhead解析器匹配失败时，仍报错
                     if(!lookheadResult.success){
                         return fail(index, 'lookhead fail!');
+                    }
+                }
+                return result;
+            });
+        },
+        /**
+         * @method noLookhead
+         *
+         * @param {Parser} parser   原解析器
+         * @param {parser} noLookhead 消极前瞻解析器
+         *
+         * @desc 当原解析器在当前输入流解析成功后，需要消极前瞻解析器在原解析器解析后的位置解析失败，原解析器才是解析成功的
+         *
+         */
+        noLookhead: function(parser, lookhead){
+            return Parser(function(stream, index){
+                var result = parser.parse(stream, index);
+
+                if(result.success){
+
+                    var lookheadResult = lookhead.parse(stream, result.endIndex);
+
+                    //在原解析器匹配成功时，但noLookhead解析器匹配又成功时，就进行报错
+                    if(lookheadResult.success){
+                        return fail(index, 'noLookhead fail!');
                     }
                 }
                 return result;
