@@ -390,7 +390,7 @@ var jcon = (function(undefined){
          */
         noInStr: function(str){
             return Parser(function(stream, index){
-                if(str.indexOf(stream[index]) === -1){
+                if(str.indexOf(stream[index]) === -1 && stream[index] !== undefined){
                     return success(index, stream[index]);
                 }
                 return fail(index, 'no in '+ str);

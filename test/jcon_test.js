@@ -38,6 +38,7 @@ module.exports = (function(){
             },
             noInStr: function(test){
                 test.equal(jcon.noInStr('abc').parse('k').value, 'k', 'jcon.noInStr ok');
+                test.equal(jcon.noInStr('abc').parse('').success, false, 'jcon.noInStr ok');
                 test.done();
             },
             until: function(test){
