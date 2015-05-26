@@ -20,6 +20,13 @@ module.exports = (function(){
                 test.equal(jcon.regex(/1?/).parse('').value, '', 'jcon.regex ok!');
                 test.done();
             },
+            not: function(test){
+                test.equal(jcon.string('123').not().parse('123').success, false, 'jcon.not');
+                test.equal(jcon.string('123').not().parse('223').value, '2', 'jcon.not');
+                test.equal(jcon.string('123').not().not().parse('123').value, '1', 'jcon.not');
+
+                test.done();
+            },
             success: function(test){
                 test.equal(jcon.success('success value').parse('').value, 'success value', 'jcon.success ok');
                 test.done();

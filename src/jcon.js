@@ -162,6 +162,20 @@ var jcon = (function(undefined){
                 return jcon.seq.apply(jcon, args);
             },
 
+            /**
+             * @method not
+             *
+             * @param {Parser} parser   原解析器
+             *
+             * @desc 返回将原解析器取反的解析器：如原解析器解析成功，则返回出错信息，如原解析器解析失败，则在当前解析位置返回解析成功，长度为一个字符的解析结果
+             *
+             */
+            not: function(){
+                var args = slice.call(arguments, 0);
+                args.unshift(this);
+                return jcon.not.apply(jcon, args);
+            },
+
 
             /**
              * @method or
@@ -538,6 +552,27 @@ var jcon = (function(undefined){
                 }else{
                     return fail(index, '');
                 }
+            });
+        },
+
+        /**
+         * @method not
+         *
+         * @param {Parser} parser   原解析器
+         *
+         * @desc 返回将原解析器取反的解析器：如原解析器解析成功，则返回出错信息，如原解析器解析失败，则在当前解析位置返回解析成功，长度为一个字符的解析结果
+         *
+         */
+        not: function(parser){
+            return Parser(function(stream, index){
+                var result = parser.parse(stream, index);
+
+                if(result.success){
+                    return fail(result.index, 'not('+result.value+')');
+                }else{
+                    return success(index, stream[index]);
+                }
+                return result;
             });
         },
 
