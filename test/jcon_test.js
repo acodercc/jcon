@@ -10,14 +10,14 @@ module.exports = (function(){
     return {
         jcon: {
             string: function(test){
-                test.equal(jcon.string('takumi4ichi').parse('takumi4ichi').value, 'takumi4ichi', 'jcon.string ok');
+                test.equal(jcon.string('takumi4ichi').parse('takumi4ichi').value, 'takumi4ichi', 'jcon.string');
                 test.done();
             },
             regex: function(test){
-                test.equal(jcon.regex(/\.(\w+)/, 1).parse('.item').value, 'item', 'jcon.regex ok');
+                test.equal(jcon.regex(/\.(\w+)/, 1).parse('.item').value, 'item', 'jcon.regex');
 
                 //必须让正则解析器有解析空字符串仍解析成功的能力，即模式本身可以是一个空串
-                test.equal(jcon.regex(/1?/).parse('').value, '', 'jcon.regex ok!');
+                test.equal(jcon.regex(/1?/).parse('').value, '', 'jcon.regex');
                 test.done();
             },
             not: function(test){
@@ -28,31 +28,31 @@ module.exports = (function(){
                 test.done();
             },
             success: function(test){
-                test.equal(jcon.success('success value').parse('').value, 'success value', 'jcon.success ok');
+                test.equal(jcon.success('success value').parse('').value, 'success value', 'jcon.success');
                 test.done();
             },
             fail: function(test){
-                test.equal(jcon.fail('fail expected').parse('').expected, 'fail expected', 'jcon.fail ok');
+                test.equal(jcon.fail('fail expected').parse('').expected, 'fail expected', 'jcon.fail');
                 test.done();
             },
             chr: function(test){
-                test.equal(jcon.chr('a').parse('abc').value, 'a', 'jcon.chr ok');
+                test.equal(jcon.chr('a').parse('abc').value, 'a', 'jcon.chr');
                 test.done();
             },
             inStr: function(test){
-                test.equal(jcon.inStr('abc').parse('b').value, 'b', 'jcon.inStr ok');
+                test.equal(jcon.inStr('abc').parse('b').value, 'b', 'jcon.inStr');
                 test.done();
             },
             noInStr: function(test){
-                test.equal(jcon.noInStr('abc').parse('k').value, 'k', 'jcon.noInStr ok');
-                test.equal(jcon.noInStr('abc').parse('').success, false, 'jcon.noInStr ok');
+                test.equal(jcon.noInStr('abc').parse('k').value, 'k', 'jcon.noInStr');
+                test.equal(jcon.noInStr('abc').parse('').success, false, 'jcon.noInStr');
                 test.done();
             },
             until: function(test){
                 var letters = jcon.until(function(chr){
                     return /^[a-z]$/.test(chr);
                 })
-                test.deepEqual(letters.parse('abcDEF').value, ['a','b','c'], 'jcon.until ok');
+                test.deepEqual(letters.parse('abcDEF').value, ['a','b','c'], 'jcon.until');
                 test.done();
             },
             lazy: function(test){
@@ -63,7 +63,7 @@ module.exports = (function(){
                     return jcon.string((new Date).getSeconds()+'');
                 });
 
-                test.equal(currentSecondParser.parse((new Date).getSeconds()+'').success, true, 'jcon.lazy ok');
+                test.equal(currentSecondParser.parse((new Date).getSeconds()+'').success, true, 'jcon.lazy');
                 test.done();
             }
         }

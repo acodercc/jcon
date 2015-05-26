@@ -47,7 +47,7 @@ module.exports = {
                         }
                     ]
                 }
-            ], 'ast ok!');
+            ], 'ast');
 
             test.done();
         }
