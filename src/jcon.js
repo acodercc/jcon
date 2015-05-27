@@ -567,7 +567,7 @@ var jcon = (function(undefined){
             return Parser(function(stream, index){
                 var result = parser.parse(stream, index);
 
-                if(result.success){
+                if(result.success || stream[index] === undefined){
                     return fail(result.index, 'not('+result.value+')');
                 }else{
                     return success(index, stream[index]);
