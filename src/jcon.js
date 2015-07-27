@@ -176,6 +176,21 @@ var jcon = (function(undefined){
                 return jcon.not.apply(jcon, args);
             },
 
+            /**
+             * @method and
+             *
+             * @param {Parser} parser   原解析器
+             *
+             * @desc 组合n个解析器，依次尝试解析，全部成功则解析成功，解析结果为被组合的解析器的最短解析结果
+
+             *
+             */
+            and: function(){
+                var args = slice.call(arguments, 0);
+                args.unshift(this);
+                return jcon.and.apply(jcon, args);
+            },
+
 
             /**
              * @method or
@@ -483,6 +498,36 @@ var jcon = (function(undefined){
             });
         },
 
+
+            
+        /**
+         * @method and
+         *
+         * @param {Array:Parser} arguments        组合n个解析器，依次尝试解析，全部成功则解析成功，解析结果为被组合的解析器的最短解析结果
+         *
+         * @desc 进行解析器的与组合
+         */
+        and: function(){
+            var args = slice.call(arguments, 0);
+            return Parser(function(stream, index){
+                var parser,
+                result,
+                results = [],
+                parserIndex = 0;
+                while(parser = args[parserIndex++]){
+                    result = parser.parse(stream, index);
+                    if(result.success){
+                        results.push(result);
+                    }
+                }
+                if(results.length === args.length){
+                    results.sort(function(a, b){return a.endIndex - b.endIndex;});
+                    return results[0];
+                }else{
+                    return fail(index, 'in and_parser');
+                }
+            });
+        },
 
         /**
          * @method or

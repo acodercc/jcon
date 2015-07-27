@@ -33,6 +33,12 @@ module.exports = (function(){
                 test.done();
             },
 
+            and: function(test){
+                test.equal(jcon.and(jcon.string('111'), jcon.regex(/\d+/)).parse('1111').value, '111', 'and');
+                test.equal(jcon.and(jcon.string('111'), jcon.regex(/\d/)).parse('1111').value, '1', 'and');
+                test.equal(jcon.and(jcon.string('111'), jcon.not(jcon.regex(/[a-z]/)).many()).parse('1111').value, '111', 'and');
+                test.done();
+            },
             or: function(test){
 
 
