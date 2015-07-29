@@ -1,16 +1,16 @@
 {
   "name": "jcon",
   "description": "A JavaScript parser combinator Library",
-  "version": "0.3.2",
-  "homepage": "https://github.com/takumi4ichi",
+  "version": "0.3.3",
+  "homepage": "https://github.com/CecilLee",
   "author": {
-    "name": "takumi4ichi",
-    "email": "takumi4ichi@gmail.com"
+    "name": "CecilLee",
+    "email": "cciscecil@gmail.com"
   },
   "main": "./src/jcon.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:takumi4ichi/jcon.git"
+    "url": "git@github.com:CecilLee/jcon.git"
   },
   "licenses": [
     {
